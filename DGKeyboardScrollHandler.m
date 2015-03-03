@@ -135,6 +135,10 @@
         {
             self.textViewDelegate = (id<UITextViewDelegate>)viewController;
         }
+        if ([viewController conformsToProtocol:@protocol(UISearchBarDelegate)])
+        {
+            self.searchBarDelegate = (id<UISearchBarDelegate>)viewController;
+        }
 }
 
 - (void)attachAllFieldDelegates
@@ -153,6 +157,10 @@
         else if ([subview isKindOfClass:[UITextView class]])
         {
             ((UITextView *)subview).delegate = self;
+        }
+        else if ([subview isKindOfClass:[UISearchBar class]])
+        {
+            ((UISearchBar *)subview).delegate = self;
         }
         else
         {
@@ -390,7 +398,121 @@
     }
 }
 
-#pragma mark Keyboard Management
+#pragma mark - UISearchBarDelegate
+
+- (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
+{
+    if ([searchBar isDescendantOfView:self.scrollView])
+    {
+        self.currentFirstResponder = searchBar;
+    }
+    
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarShouldBeginEditing:)])
+    {
+        return [_searchBarDelegate searchBarShouldBeginEditing:searchBar];
+    }
+    return YES;
+}
+
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
+{
+    if ([searchBar isDescendantOfView:self.scrollView])
+    {
+        self.currentFirstResponder = searchBar;
+    }
+    if (_isKeyboardShowingForThisVC)
+    {
+        [_scrollView scrollRectToVisible:[searchBar.superview convertRect:searchBar.frame toView:_scrollView] animated:YES];
+    }
+    else
+    {
+        _lastOffsetBeforeKeyboardWasShown = _scrollView.contentOffset;
+    }
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarTextDidBeginEditing:)])
+    {
+        [_searchBarDelegate searchBarTextDidBeginEditing:searchBar];
+    }
+}
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+    if ([searchBar isDescendantOfView:self.scrollView])
+    {
+        self.currentFirstResponder = nil;
+    }
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarTextDidEndEditing:)])
+    {
+        [_searchBarDelegate searchBarTextDidEndEditing:searchBar];
+    }
+}
+
+- (BOOL)searchBar:(UISearchBar *)searchBar shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBar:shouldChangeTextInRange:replacementText:)])
+    {
+        return [_searchBarDelegate searchBar:searchBar shouldChangeTextInRange:range replacementText:text];
+    }
+    return YES;
+}
+
+- (BOOL)searchBarShouldEndEditing:(UISearchBar *)searchBar
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarShouldEndEditing:)])
+    {
+        return [_searchBarDelegate searchBarShouldEndEditing:searchBar];
+    }
+    return YES;
+}
+
+- (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarSearchButtonClicked:)])
+    {
+        return [_searchBarDelegate searchBarSearchButtonClicked:searchBar];
+    }
+}
+
+- (void)searchBarBookmarkButtonClicked:(UISearchBar *)searchBar
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarBookmarkButtonClicked:)])
+    {
+        return [_searchBarDelegate searchBarBookmarkButtonClicked:searchBar];
+    }
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarCancelButtonClicked:)])
+    {
+        return [_searchBarDelegate searchBarCancelButtonClicked:searchBar];
+    }
+}
+
+- (void)searchBarResultsListButtonClicked:(UISearchBar *)searchBar
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBarResultsListButtonClicked:)])
+    {
+        return [_searchBarDelegate searchBarResultsListButtonClicked:searchBar];
+    }
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBar:textDidChange:)])
+    {
+        return [_searchBarDelegate searchBar:searchBar textDidChange:searchText];
+    }
+}
+
+- (void)searchBar:(UISearchBar *)searchBar selectedScopeButtonIndexDidChange:(NSInteger)selectedScope
+{
+    if ([_searchBarDelegate respondsToSelector:@selector(searchBar:selectedScopeButtonIndexDidChange:)])
+    {
+        return [_searchBarDelegate searchBar:searchBar selectedScopeButtonIndexDidChange:selectedScope];
+    }
+}
+
+#pragma mark - Keyboard Management
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {

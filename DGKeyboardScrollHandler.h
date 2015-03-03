@@ -39,7 +39,7 @@
 
 typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scrollView, CGRect keyboardFrame);
 
-@interface DGKeyboardScrollHandler : NSObject <UITextFieldDelegate, UITextViewDelegate>
+@interface DGKeyboardScrollHandler : NSObject <UITextFieldDelegate, UITextViewDelegate, UISearchBarDelegate>
 
 /*! @property scrollView
     @brief This specifies the scrollView (or tableView) to scroll when the keyboard is showing.
@@ -99,6 +99,10 @@ typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scroll
 /*! @property textViewDelegate
     @brief A delegate forwarded from all UITextViews in which we have set ourselves as delegate */
 @property (nonatomic, weak) id<UITextViewDelegate> textViewDelegate;
+
+/*! @property searchBarDelegate
+ @brief A delegate forwarded from all UISearchBars in which we have set ourselves as delegate */
+@property (nonatomic, weak) id<UISearchBarDelegate> searchBarDelegate;
 
 /*! Init the DGKeyboardScrollHandler with a viewController to handle...
     @param viewController Your viewController. We use this to automatically attach delegates and the scrollView,
