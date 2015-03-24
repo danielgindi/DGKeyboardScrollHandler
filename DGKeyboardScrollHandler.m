@@ -523,11 +523,6 @@
     {
         _isKeyboardShowingForThisVC = YES;
         
-        if (_scrollView.contentSize.height <= _scrollView.bounds.size.height - _scrollView.contentInset.top - _scrollView.contentInset.bottom)
-        {
-            _scrollView.scrollEnabled = YES;
-        }
-        
 		NSDictionary *userInfo = [notification userInfo];
         
 		NSValue *keyboardFrameValue = userInfo[UIKeyboardFrameEndUserInfoKey];
@@ -666,10 +661,6 @@
              if (_scrollToOriginalPositionAfterKeyboardHide)
              {
                  [_scrollView setContentOffset:_lastOffsetBeforeKeyboardWasShown animated:YES];
-             }
-             if (_scrollView.contentSize.height <= _scrollView.bounds.size.height - _scrollView.contentInset.top - _scrollView.contentInset.bottom)
-             {
-                 _scrollView.scrollEnabled = NO;
              }
          }];
 	}
