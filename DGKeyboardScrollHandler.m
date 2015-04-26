@@ -527,7 +527,7 @@
         
 		NSValue *keyboardFrameValue = userInfo[UIKeyboardFrameEndUserInfoKey];
         CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
-		if (UIInterfaceOrientationLandscapeLeft == self.viewController.interfaceOrientation || UIInterfaceOrientationLandscapeRight == self.viewController.interfaceOrientation)
+		if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
         {
             CGRect swappedRect;
             swappedRect.origin.x = keyboardFrame.origin.y;
@@ -539,7 +539,7 @@
 		
 		// Reduce the scrollView height by the part of the keyboard that actually covers the scrollView
 		CGRect windowRect = [[UIApplication sharedApplication] keyWindow].bounds;
-		if (UIInterfaceOrientationLandscapeLeft == self.viewController.interfaceOrientation || UIInterfaceOrientationLandscapeRight == self.viewController.interfaceOrientation)
+		if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
         {
             CGRect swappedRect;
             swappedRect.origin.x = windowRect.origin.y;
@@ -549,7 +549,7 @@
             windowRect = swappedRect;
 		}
 		CGRect viewRectAbsolute = [_scrollView convertRect:_scrollView.bounds toView:[[UIApplication sharedApplication] keyWindow]];
-		if (UIInterfaceOrientationLandscapeLeft == self.viewController.interfaceOrientation || UIInterfaceOrientationLandscapeRight == self.viewController.interfaceOrientation)
+		if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
         {
 			CGRect swappedRect;
             swappedRect.origin.x = viewRectAbsolute.origin.y;
