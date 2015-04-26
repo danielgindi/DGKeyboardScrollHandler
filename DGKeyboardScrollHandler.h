@@ -35,7 +35,7 @@
 //  SOFTWARE. 
 //  
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scrollView, CGRect keyboardFrame);
 
