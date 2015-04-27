@@ -693,4 +693,27 @@
     }
 }
 
+#pragma mark - Utility
+
+- (CGFloat)calculatedContentHeightForCurrentScrollView
+{
+    return [DGKeyboardScrollHandler calculatedContentHeightForScrollView:self.scrollView];
+}
+
++ (CGFloat)calculatedContentHeightForScrollView:(UIScrollView *)scrollView
+{
+    CGFloat maxY = 0.f, y;
+    
+    for (UIView *subview in scrollView.subviews)
+    {
+        y = CGRectGetMaxY(subview.frame);
+        if (y > maxY)
+        {
+            maxY = y;
+        }
+    }
+    
+    return maxY;
+}
+
 @end
