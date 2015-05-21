@@ -140,4 +140,13 @@ typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scroll
     @param firstResponder The view that became first responder */
 - (void)viewBecameFirstResponder:(UIView *)firstResponder;
 
+#pragma mark - Utility
+
+/*! This calculates the bottom-most position inside a scroll view, if you need to dynamically calculate the contentSize of a scrollView */
+- (CGFloat)calculatedContentHeightForCurrentScrollView;
+
+/*! This calculates the bottom-most position inside a scroll view, if you need to dynamically calculate the contentSize of a scrollView
+ @param scrollView The scrollView to calculate for */
++ (CGFloat)calculatedContentHeightForScrollView:(UIScrollView *)scrollView;
+
 @end
