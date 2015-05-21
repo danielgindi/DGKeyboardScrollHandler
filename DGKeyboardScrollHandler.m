@@ -611,7 +611,17 @@
              }
              else
              {
-                 [_scrollView scrollRectToVisible:[((UIView *)_currentFirstResponder).superview convertRect:((UIView *)_currentFirstResponder).frame toView:_scrollView] animated:YES];
+                 CGRect targetRect = [((UIView *)_currentFirstResponder).superview convertRect:((UIView *)_currentFirstResponder).frame toView:_scrollView];
+                 
+                 if ([_scrollView isKindOfClass:UITableView.class])
+                 {
+                     [_scrollView scrollRectToVisible:targetRect animated:YES];
+                 }
+                 else
+                 {
+                     // scrollRectToVisible is faulty, we have our alternative method
+                     [self scrollRectToVisible:targetRect animated:YES];
+                 }
              }
          }];
 	}
@@ -714,6 +724,71 @@
     }
     
     return maxY;
+}
+
+- (void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated
+{
+    [DGKeyboardScrollHandler scroll:_scrollView rectToVisible:rect animated:animated];
+}
+
++ (void)scroll:(UIScrollView *)scrollView rectToVisible:(CGRect)rect animated:(BOOL)animated
+{
+    UIEdgeInsets scrollInsets = scrollView.contentInset;
+    CGSize scrollSize = scrollView.contentSize;
+    CGRect scrollBounds = scrollView.bounds;
+    
+    CGRect scrollInsetBounds = scrollBounds;
+    scrollInsetBounds.origin.x += scrollInsets.left;
+    scrollInsetBounds.origin.y += scrollInsets.top;
+    scrollInsetBounds.size.width -= scrollInsets.left + scrollInsets.right;
+    scrollInsetBounds.size.height -= scrollInsets.top + scrollInsets.bottom;
+    
+    CGRect visibleRect = scrollInsetBounds;
+    visibleRect.origin.x += scrollView.contentOffset.x;
+    visibleRect.origin.y += scrollView.contentOffset.y;
+    
+    if (!CGRectContainsRect(visibleRect, rect))
+    {
+        CGPoint offset = scrollView.contentOffset;
+        
+        if (rect.size.width > visibleRect.size.width)
+        {
+            offset.x -= CGRectGetMinX(visibleRect) - CGRectGetMinX(rect) - (rect.size.width - visibleRect.size.width) / 2.f;
+        }
+        else if (CGRectGetMaxX(rect) > CGRectGetMaxX(visibleRect))
+        {
+            offset.x += CGRectGetMaxX(rect) - CGRectGetMaxX(visibleRect);
+        }
+        else if (CGRectGetMinX(rect) < CGRectGetMinX(visibleRect))
+        {
+            offset.x -= CGRectGetMinX(visibleRect) - CGRectGetMinX(rect);
+        }
+        
+        if (rect.size.height > visibleRect.size.height)
+        {
+            offset.y -= CGRectGetMinY(visibleRect) - CGRectGetMinY(rect) - (rect.size.height - visibleRect.size.height) / 2.f;
+        }
+        else if (CGRectGetMaxY(rect) > CGRectGetMaxY(visibleRect))
+        {
+            offset.y += CGRectGetMaxY(rect) - CGRectGetMaxY(visibleRect);
+        }
+        else if (CGRectGetMinY(rect) < CGRectGetMinY(visibleRect))
+        {
+            offset.y -= CGRectGetMinY(visibleRect) - CGRectGetMinY(rect);
+        }
+        
+        offset.x = fmax(fmin(offset.x, scrollSize.width - scrollInsetBounds.size.width), 0.f);
+        offset.y = fmax(fmin(offset.y, scrollSize.height - scrollInsetBounds.size.height), 0.f);
+                        
+        if (animated)
+        {
+            [scrollView setContentOffset:offset animated:0.15];
+        }
+        else
+        {
+            [scrollView setContentOffset:offset];
+        }
+    }
 }
 
 @end
