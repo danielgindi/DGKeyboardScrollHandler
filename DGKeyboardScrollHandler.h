@@ -149,11 +149,4 @@ typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scroll
  @param scrollView The scrollView to calculate for */
 + (CGFloat)calculatedContentHeightForScrollView:(UIScrollView *)scrollView;
 
-/*! An alternative to the faulty scrollRectToVisible: function of the UIScrollView
- @param scrollView The scrollView to scroll
- @param rect The rect to scroll to
- @param animated Will the scrolling be animated?
- */
-+ (void)scroll:(UIScrollView *)scrollView rectToVisible:(CGRect)rect animated:(BOOL)animated;
-
 @end
