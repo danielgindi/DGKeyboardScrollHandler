@@ -8,27 +8,27 @@
 //  https://github.com/danielgindi/DGKeyboardScrollHandler
 //
 //  The MIT License (MIT)
-//  
+//
 //  Copyright (c) 2014 Daniel Cohen Gindi (danielgindi@gmail.com)
-//  
+//
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
 //  in the Software without restriction, including without limitation the rights
 //  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 //  copies of the Software, and to permit persons to whom the Software is
 //  furnished to do so, subject to the following conditions:
-//  
+//
 //  The above copyright notice and this permission notice shall be included in all
 //  copies or substantial portions of the Software.
-//  
+//
 //  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 //  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 //  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 //  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 //  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 //  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//  SOFTWARE. 
-//  
+//  SOFTWARE.
+//
 
 #import "DGKeyboardScrollHandler.h"
 
@@ -60,10 +60,10 @@
 
 - (void)dealloc
 {
-	NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
     
-	[dc removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-	[dc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [dc removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [dc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (id)initForViewController:(UIViewController *)viewController
@@ -83,18 +83,18 @@
 
 - (void)viewDidAppear
 {
-	[_scrollView flashScrollIndicators];
+    [_scrollView flashScrollIndicators];
     
-	NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
     
-	[dc removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-	[dc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    [dc removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [dc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
     
-	[dc addObserver:self
+    [dc addObserver:self
            selector:@selector(keyboardWillShow:)
                name:UIKeyboardWillShowNotification
              object:nil];
-	[dc addObserver:self
+    [dc addObserver:self
            selector:@selector(keyboardWillHide:)
                name:UIKeyboardWillHideNotification
              object:nil];
@@ -102,43 +102,43 @@
 
 - (void)viewWillDisappear
 {
-	[[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
-	[self dismissKeyboardIfPossible];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:UIKeyboardWillShowNotification object:nil];
+    [self dismissKeyboardIfPossible];
 }
 
 - (void)viewDidDisappear
 {
-	NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
-	[dc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
+    NSNotificationCenter *dc = [NSNotificationCenter defaultCenter];
+    [dc removeObserver:self name:UIKeyboardWillHideNotification object:nil];
 }
 
 - (void)setViewController:(UIViewController *)viewController
 {
-	_viewController = viewController;
-        
-        // Try to detect scrollview
-        if ([viewController respondsToSelector:@selector(scrollView)])
-        {
-            self.scrollView = [((id)viewController) performSelector:@selector(scrollView) withObject:nil];
-        }
-        else if ([viewController respondsToSelector:@selector(tableView)])
-        {
-            self.scrollView = [((id)viewController) performSelector:@selector(tableView) withObject:nil];
-        }
-        
-        // Try to detect delegates
-        if ([viewController conformsToProtocol:@protocol(UITextFieldDelegate)])
-        {
-            self.textFieldDelegate = (id<UITextFieldDelegate>)viewController;
-        }
-        if ([viewController conformsToProtocol:@protocol(UITextViewDelegate)])
-        {
-            self.textViewDelegate = (id<UITextViewDelegate>)viewController;
-        }
-        if ([viewController conformsToProtocol:@protocol(UISearchBarDelegate)])
-        {
-            self.searchBarDelegate = (id<UISearchBarDelegate>)viewController;
-        }
+    _viewController = viewController;
+    
+    // Try to detect scrollview
+    if ([viewController respondsToSelector:@selector(scrollView)])
+    {
+        self.scrollView = [((id)viewController) performSelector:@selector(scrollView) withObject:nil];
+    }
+    else if ([viewController respondsToSelector:@selector(tableView)])
+    {
+        self.scrollView = [((id)viewController) performSelector:@selector(tableView) withObject:nil];
+    }
+    
+    // Try to detect delegates
+    if ([viewController conformsToProtocol:@protocol(UITextFieldDelegate)])
+    {
+        self.textFieldDelegate = (id<UITextFieldDelegate>)viewController;
+    }
+    if ([viewController conformsToProtocol:@protocol(UITextViewDelegate)])
+    {
+        self.textViewDelegate = (id<UITextViewDelegate>)viewController;
+    }
+    if ([viewController conformsToProtocol:@protocol(UISearchBarDelegate)])
+    {
+        self.searchBarDelegate = (id<UISearchBarDelegate>)viewController;
+    }
 }
 
 - (void)attachAllFieldDelegates
@@ -209,8 +209,8 @@
         if (_doNotResignWhenTappingResponders || _doNotResignForButtons)
         {
             UIView *hitTest = [_scrollView hitTest:[recognizer locationInView:_scrollView] withEvent:nil];
-            if ((_doNotResignForButtons && [hitTest isKindOfClass:UIButton.class]) || 
-            	(_doNotResignWhenTappingResponders && [hitTest canBecomeFirstResponder]))
+            if ((_doNotResignForButtons && [hitTest isKindOfClass:UIButton.class]) ||
+                (_doNotResignWhenTappingResponders && [hitTest canBecomeFirstResponder]))
             {
                 return;
             }
@@ -221,7 +221,7 @@
 
 - (void)viewBecameFirstResponder:(UIView *)firstResponder
 {
-	self.currentFirstResponder = firstResponder;
+    self.currentFirstResponder = firstResponder;
     if (_isKeyboardShowingForThisVC)
     {
         [_scrollView scrollRectToVisible:[firstResponder.superview convertRect:firstResponder.frame toView:_scrollView] animated:YES];
@@ -287,7 +287,7 @@
     {
         return [_textFieldDelegate textFieldShouldReturn:textField];
     }
-	return YES;
+    return YES;
 }
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string
@@ -516,18 +516,18 @@
 
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-	/*if (self.viewController.navigationController.topViewController == self ||
+    /*if (self.viewController.navigationController.topViewController == self ||
      (!self.viewController.navigationController && !self.modalViewController))*/
-	if ((!self.viewController || ((self.viewController.navigationController.topViewController == self.viewController || self.viewController.navigationController.presentedViewController == self.viewController || self.viewController.navigationController == nil) &&
-        self.viewController.isViewLoaded && self.viewController.view.window)) && !_suppressKeyboardEvents)
+    if ((!self.viewController || ((self.viewController.navigationController.topViewController == self.viewController || self.viewController.navigationController.presentedViewController == self.viewController || self.viewController.navigationController == nil) &&
+                                  self.viewController.isViewLoaded && self.viewController.view.window)) && !_suppressKeyboardEvents)
     {
         _isKeyboardShowingForThisVC = YES;
         
-		NSDictionary *userInfo = [notification userInfo];
+        NSDictionary *userInfo = [notification userInfo];
         
-		NSValue *keyboardFrameValue = userInfo[UIKeyboardFrameEndUserInfoKey];
+        NSValue *keyboardFrameValue = userInfo[UIKeyboardFrameEndUserInfoKey];
         CGRect keyboardFrame = [keyboardFrameValue CGRectValue];
-		if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
+        if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
         {
             CGRect swappedRect;
             swappedRect.origin.x = keyboardFrame.origin.y;
@@ -535,11 +535,11 @@
             swappedRect.size.width = keyboardFrame.size.height;
             swappedRect.size.height = keyboardFrame.size.width;
             keyboardFrame = swappedRect;
-		}
-		
-		// Reduce the scrollView height by the part of the keyboard that actually covers the scrollView
-		CGRect windowRect = [[UIApplication sharedApplication] keyWindow].bounds;
-		if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
+        }
+        
+        // Reduce the scrollView height by the part of the keyboard that actually covers the scrollView
+        CGRect windowRect = [[UIApplication sharedApplication] keyWindow].bounds;
+        if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
         {
             CGRect swappedRect;
             swappedRect.origin.x = windowRect.origin.y;
@@ -547,17 +547,17 @@
             swappedRect.size.width = windowRect.size.height;
             swappedRect.size.height = windowRect.size.width;
             windowRect = swappedRect;
-		}
-		CGRect viewRectAbsolute = [_scrollView convertRect:_scrollView.bounds toView:[[UIApplication sharedApplication] keyWindow]];
-		if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
+        }
+        CGRect viewRectAbsolute = [_scrollView convertRect:_scrollView.bounds toView:[[UIApplication sharedApplication] keyWindow]];
+        if (UIDeviceOrientationLandscapeLeft == UIDevice.currentDevice.orientation || UIDeviceOrientationLandscapeRight == UIDevice.currentDevice.orientation)
         {
-			CGRect swappedRect;
+            CGRect swappedRect;
             swappedRect.origin.x = viewRectAbsolute.origin.y;
             swappedRect.origin.y = viewRectAbsolute.origin.x;
             swappedRect.size.width = viewRectAbsolute.size.height;
             swappedRect.size.height = viewRectAbsolute.size.width;
             viewRectAbsolute = swappedRect;
-		}
+        }
         
         CGFloat bottomInset = keyboardFrame.size.height - CGRectGetMaxY(windowRect) + CGRectGetMaxY(viewRectAbsolute);
         
@@ -613,31 +613,23 @@
              {
                  CGRect targetRect = [((UIView *)_currentFirstResponder).superview convertRect:((UIView *)_currentFirstResponder).frame toView:_scrollView];
                  
-                 if ([_scrollView isKindOfClass:UITableView.class])
-                 {
-                     [_scrollView scrollRectToVisible:targetRect animated:YES];
-                 }
-                 else
-                 {
-                     // scrollRectToVisible is faulty, we have our alternative method
-                     [self scrollRectToVisible:targetRect animated:YES];
-                 }
+                 [_scrollView scrollRectToVisible:targetRect animated:YES];
              }
          }];
-	}
+    }
 }
 
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-	//if (self.navigationController.topViewController == self ||
+    //if (self.navigationController.topViewController == self ||
     //    (!self.navigationController && !self.modalViewController))
-	if ((!self.viewController || ((self.viewController.navigationController.topViewController == self.viewController ||
-         self.viewController.navigationController.presentedViewController == self.viewController ||
-         (self.viewController.navigationController == nil)) && self.viewController.isViewLoaded && self.viewController.view.window)) && !_suppressKeyboardEvents)
+    if ((!self.viewController || ((self.viewController.navigationController.topViewController == self.viewController ||
+                                   self.viewController.navigationController.presentedViewController == self.viewController ||
+                                   (self.viewController.navigationController == nil)) && self.viewController.isViewLoaded && self.viewController.view.window)) && !_suppressKeyboardEvents)
     {
         _isKeyboardShowingForThisVC = NO;
         
-		NSDictionary *userInfo = [notification userInfo];
+        NSDictionary *userInfo = [notification userInfo];
         
         UIViewAnimationOptions animOptions = 0;
         switch ([[userInfo objectForKey:UIKeyboardAnimationCurveUserInfoKey] intValue])
@@ -673,7 +665,7 @@
                  [_scrollView setContentOffset:_lastOffsetBeforeKeyboardWasShown animated:YES];
              }
          }];
-	}
+    }
 }
 
 - (void)dismissKeyboardIfPossible
@@ -724,71 +716,6 @@
     }
     
     return maxY;
-}
-
-- (void)scrollRectToVisible:(CGRect)rect animated:(BOOL)animated
-{
-    [DGKeyboardScrollHandler scroll:_scrollView rectToVisible:rect animated:animated];
-}
-
-+ (void)scroll:(UIScrollView *)scrollView rectToVisible:(CGRect)rect animated:(BOOL)animated
-{
-    UIEdgeInsets scrollInsets = scrollView.contentInset;
-    CGSize scrollSize = scrollView.contentSize;
-    CGRect scrollBounds = scrollView.bounds;
-    
-    CGRect scrollInsetBounds = scrollBounds;
-    scrollInsetBounds.origin.x += scrollInsets.left;
-    scrollInsetBounds.origin.y += scrollInsets.top;
-    scrollInsetBounds.size.width -= scrollInsets.left + scrollInsets.right;
-    scrollInsetBounds.size.height -= scrollInsets.top + scrollInsets.bottom;
-    
-    CGRect visibleRect = scrollInsetBounds;
-    visibleRect.origin.x += scrollView.contentOffset.x;
-    visibleRect.origin.y += scrollView.contentOffset.y;
-    
-    if (!CGRectContainsRect(visibleRect, rect))
-    {
-        CGPoint offset = scrollView.contentOffset;
-        
-        if (rect.size.width > visibleRect.size.width)
-        {
-            offset.x -= CGRectGetMinX(visibleRect) - CGRectGetMinX(rect) - (rect.size.width - visibleRect.size.width) / 2.f;
-        }
-        else if (CGRectGetMaxX(rect) > CGRectGetMaxX(visibleRect))
-        {
-            offset.x += CGRectGetMaxX(rect) - CGRectGetMaxX(visibleRect);
-        }
-        else if (CGRectGetMinX(rect) < CGRectGetMinX(visibleRect))
-        {
-            offset.x -= CGRectGetMinX(visibleRect) - CGRectGetMinX(rect);
-        }
-        
-        if (rect.size.height > visibleRect.size.height)
-        {
-            offset.y -= CGRectGetMinY(visibleRect) - CGRectGetMinY(rect) - (rect.size.height - visibleRect.size.height) / 2.f;
-        }
-        else if (CGRectGetMaxY(rect) > CGRectGetMaxY(visibleRect))
-        {
-            offset.y += CGRectGetMaxY(rect) - CGRectGetMaxY(visibleRect);
-        }
-        else if (CGRectGetMinY(rect) < CGRectGetMinY(visibleRect))
-        {
-            offset.y -= CGRectGetMinY(visibleRect) - CGRectGetMinY(rect);
-        }
-        
-        offset.x = fmax(fmin(offset.x, scrollSize.width - scrollInsetBounds.size.width), 0.f);
-        offset.y = fmax(fmin(offset.y, scrollSize.height - scrollInsetBounds.size.height), 0.f);
-                        
-        if (animated)
-        {
-            [scrollView setContentOffset:offset animated:0.15];
-        }
-        else
-        {
-            [scrollView setContentOffset:offset];
-        }
-    }
 }
 
 @end
