@@ -37,9 +37,24 @@
 
 #import <UIKit/UIKit.h>
 
+@class DGKeyboardScrollHandler;
+
 typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scrollView, CGRect keyboardFrame);
 
+@protocol DGKeyboardScrollHandlerDelegate <NSObject>
+
+@optional
+- (void)keyboardScrollHandler:(DGKeyboardScrollHandler *)handler
+       didRecognizeTapAtPoint:(CGPoint)tapPoint
+                 onScrollView:(UIScrollView *)scrollView
+          withKeyboardVisible:(BOOL)keyboardVisible;
+
+@end
+
 @interface DGKeyboardScrollHandler : NSObject <UITextFieldDelegate, UITextViewDelegate, UISearchBarDelegate>
+
+/*! @property delegate */
+@property (nonatomic, weak) IBOutlet id<DGKeyboardScrollHandlerDelegate> delegate;
 
 /*! @property scrollView
     @brief This specifies the scrollView (or tableView) to scroll when the keyboard is showing.

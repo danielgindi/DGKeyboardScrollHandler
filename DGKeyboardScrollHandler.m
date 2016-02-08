@@ -204,6 +204,14 @@
 
 - (void)scrollViewTapGestureRecognized:(UIGestureRecognizer *)recognizer
 {
+    if ([self.delegate respondsToSelector:@selector(keyboardScrollHandler:didRecognizeTapAtPoint:onScrollView:withKeyboardVisible:)])
+    {
+        [self.delegate keyboardScrollHandler:self
+                      didRecognizeTapAtPoint:[recognizer locationInView:recognizer.view]
+                                onScrollView:_scrollView
+                         withKeyboardVisible:_isKeyboardShowingForThisVC];
+    }
+    
     if (_isKeyboardShowingForThisVC)
     {
         if (_doNotResignWhenTappingResponders || _doNotResignForButtons)
@@ -224,7 +232,10 @@
     self.currentFirstResponder = firstResponder;
     if (_isKeyboardShowingForThisVC)
     {
-        [_scrollView scrollRectToVisible:[firstResponder.superview convertRect:firstResponder.frame toView:_scrollView] animated:YES];
+        [DGKeyboardScrollHandler scroll:_scrollView
+                          rectToVisible:[firstResponder.superview convertRect:firstResponder.frame toView:_scrollView]
+                               animated:YES
+                            checkForBug:YES];
     }
     else
     {
@@ -256,7 +267,10 @@
     }
     if (_isKeyboardShowingForThisVC)
     {
-        [_scrollView scrollRectToVisible:[textField.superview convertRect:textField.frame toView:_scrollView] animated:YES];
+        [DGKeyboardScrollHandler scroll:_scrollView
+                          rectToVisible:[textField.superview convertRect:textField.frame toView:_scrollView]
+                               animated:YES
+                            checkForBug:YES];
     }
     else
     {
@@ -349,7 +363,10 @@
     }
     if (_isKeyboardShowingForThisVC)
     {
-        [_scrollView scrollRectToVisible:[textView.superview convertRect:textView.frame toView:_scrollView] animated:YES];
+        [DGKeyboardScrollHandler scroll:_scrollView
+                          rectToVisible:[textView.superview convertRect:textView.frame toView:_scrollView]
+                               animated:YES
+                            checkForBug:YES];
     }
     else
     {
@@ -422,7 +439,10 @@
     }
     if (_isKeyboardShowingForThisVC)
     {
-        [_scrollView scrollRectToVisible:[searchBar.superview convertRect:searchBar.frame toView:_scrollView] animated:YES];
+        [DGKeyboardScrollHandler scroll:_scrollView
+                          rectToVisible:[searchBar.superview convertRect:searchBar.frame toView:_scrollView]
+                               animated:YES
+                            checkForBug:YES];
     }
     else
     {
@@ -613,7 +633,10 @@
              {
                  CGRect targetRect = [((UIView *)_currentFirstResponder).superview convertRect:((UIView *)_currentFirstResponder).frame toView:_scrollView];
                  
-                 [_scrollView scrollRectToVisible:targetRect animated:YES];
+                 [DGKeyboardScrollHandler scroll:_scrollView
+                                   rectToVisible:targetRect
+                                        animated:YES
+                                     checkForBug:YES];
              }
          }];
     }
@@ -716,6 +739,91 @@
     }
     
     return maxY;
+}
+
++ (BOOL)isScrollToRectBuggyOnScrollView:(UIScrollView *)scrollView
+{
+    CGRect bounds = scrollView.bounds;
+    CGSize contentSize = scrollView.contentSize;
+    
+    return contentSize.height < bounds.size.height || contentSize.width < bounds.size.width;
+}
+
++ (void)scroll:(UIScrollView *)scrollView
+ rectToVisible:(CGRect)rect
+      animated:(BOOL)animated
+   checkForBug:(BOOL)ifBuggy
+{
+    if (!ifBuggy || [self isScrollToRectBuggyOnScrollView:scrollView])
+    {
+        [self scroll:scrollView rectToVisible:rect animated:animated];
+    }
+    else
+    {
+        [scrollView scrollRectToVisible:rect animated:animated];
+    }
+}
+
++ (void)scroll:(UIScrollView *)scrollView
+ rectToVisible:(CGRect)rect
+      animated:(BOOL)animated
+{
+    UIEdgeInsets scrollInsets = scrollView.contentInset;
+    CGSize scrollSize = scrollView.contentSize;
+    CGRect scrollBounds = scrollView.bounds;
+    
+    CGRect scrollInsetBounds = scrollBounds;
+    scrollInsetBounds.origin.x += scrollInsets.left;
+    scrollInsetBounds.origin.y += scrollInsets.top;
+    scrollInsetBounds.size.width -= scrollInsets.left + scrollInsets.right;
+    scrollInsetBounds.size.height -= scrollInsets.top + scrollInsets.bottom;
+    
+    CGRect visibleRect = scrollInsetBounds;
+    visibleRect.origin.x += scrollView.contentOffset.x;
+    visibleRect.origin.y += scrollView.contentOffset.y;
+    
+    if (!CGRectContainsRect(visibleRect, rect))
+    {
+        CGPoint offset = scrollView.contentOffset;
+        
+        if (rect.size.width > visibleRect.size.width)
+        {
+            offset.x -= CGRectGetMinX(visibleRect) - CGRectGetMinX(rect) - (rect.size.width - visibleRect.size.width) / 2.f;
+        }
+        else if (CGRectGetMaxX(rect) > CGRectGetMaxX(visibleRect))
+        {
+            offset.x += CGRectGetMaxX(rect) - CGRectGetMaxX(visibleRect);
+        }
+        else if (CGRectGetMinX(rect) < CGRectGetMinX(visibleRect))
+        {
+            offset.x -= CGRectGetMinX(visibleRect) - CGRectGetMinX(rect);
+        }
+        
+        if (rect.size.height > visibleRect.size.height)
+        {
+            offset.y -= CGRectGetMinY(visibleRect) - CGRectGetMinY(rect) - (rect.size.height - visibleRect.size.height) / 2.f;
+        }
+        else if (CGRectGetMaxY(rect) > CGRectGetMaxY(visibleRect))
+        {
+            offset.y += CGRectGetMaxY(rect) - CGRectGetMaxY(visibleRect);
+        }
+        else if (CGRectGetMinY(rect) < CGRectGetMinY(visibleRect))
+        {
+            offset.y -= CGRectGetMinY(visibleRect) - CGRectGetMinY(rect);
+        }
+        
+        offset.x = fmax(fmin(offset.x, scrollSize.width - scrollInsetBounds.size.width), 0.f);
+        offset.y = fmax(fmin(offset.y, scrollSize.height - scrollInsetBounds.size.height), 0.f);
+        
+        if (animated)
+        {
+            [scrollView setContentOffset:offset animated:0.15];
+        }
+        else
+        {
+            [scrollView setContentOffset:offset];
+        }
+    }
 }
 
 @end
