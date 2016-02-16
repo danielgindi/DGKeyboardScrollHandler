@@ -66,6 +66,10 @@ typedef CGPoint (^DGKeyboardScrollHandlerScrollAmountBlock)(UIScrollView *scroll
            and to recognize interfaceOrientation and other stuff */
 @property (nonatomic, weak) IBOutlet UIViewController *viewController;
 
+/*! @property isKeyboardShowingForThisVC
+    @brief A flag indicating whether the keyboard is known to be visible for the current view controller */
+@property (nonatomic, assign, readonly) BOOL isKeyboardShowingForThisVC;
+
 /*! @property scrollToOriginalPositionAfterKeyboardHide
     @brief Set this to YES if you want to record the position of the scroll before the keyboard was shown, 
           to return to that exact point regardless of where the user scrolled to. 
