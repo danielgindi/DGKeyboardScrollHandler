@@ -34,7 +34,6 @@
 
 @interface DGKeyboardScrollHandler ()
 {
-    BOOL _isKeyboardShowingForThisVC;
     CGPoint _lastOffsetBeforeKeyboardWasShown;
     UITapGestureRecognizer *scrollViewTapGestureRecognizer;
     CGFloat _scrollViewBottomInset;
