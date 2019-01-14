@@ -82,11 +82,11 @@ class DGKeyboardScrollHandler: NSObject, UITextFieldDelegate, UITextViewDelegate
             // Try to detect scrollview
             if viewController?.responds(to: #selector(getter: scrollView)) ?? false
             {
-                scrollView = (viewController)?.perform(#selector(getter: scrollView), with: nil)?.takeRetainedValue() as? UIScrollView
+                scrollView = (viewController)?.perform(#selector(getter: scrollView), with: nil)?.takeUnretainedValue() as? UIScrollView
             }
             else if viewController?.responds(to: #selector(getter: UITableViewController.tableView)) ?? false
             {
-                scrollView = (viewController)?.perform(#selector(getter: UITableViewController.tableView), with: nil)?.takeRetainedValue() as? UIScrollView
+                scrollView = (viewController)?.perform(#selector(getter: UITableViewController.tableView), with: nil)?.takeUnretainedValue() as? UIScrollView
             }
             
             // Try to detect delegates
