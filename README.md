@@ -4,8 +4,6 @@ DGKeyboardScrollHandler
 A helper to handle scrolling your UITableView or UIScrollView when the keyboard appears (iOS / ObjC)
 
 
-This was originally in my other repository https://github.com/danielgindi/drunken-danger-zone/
-
 
 ## Me
 * Hi! I am Daniel Cohen Gindi. Or in short- Daniel.
